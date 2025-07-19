@@ -2,16 +2,27 @@
   "name": "init-project",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.10.0",
+    "@prisma/client": "^6.12.0",
+    "bcrypt": "^6.0.0",
+    "jose": "^6.0.12",
+    "next": "15.4.1",
+    "next-auth": "^5.0.0-beta.29",
+    "prisma": "^6.12.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.4.1"
+    "react-icons": "^5.5.0",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
