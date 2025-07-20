@@ -1,17 +1,29 @@
 "use client";
+import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
-import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("email", email);
-      console.log("password", password);
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+
+      if (result.error) {
+        console.error(result.error);
+        return false;
+      }
+      router.push("/profile");
     } catch (error) {
       console.log("error", error);
     }

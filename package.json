@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "prisma generate",
-    "seed": "node prisma/seed.js"
+    "lint": "next lint"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
