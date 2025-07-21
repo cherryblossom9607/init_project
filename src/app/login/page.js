@@ -15,7 +15,10 @@ import { z } from "zod";
 // 1. กำหนด Zod Schema สำหรับข้อมูลฟอร์ม
 const signInSchema = z.object({
   email: z.string().email("รูปแบบอีเมลไม่ถูกต้อง").min(1, "กรุณากรอกอีเมล"),
-  password: z.string().min(1, "กรุณากรอกรหัสผ่าน").min(5,'รหัสผ่านต้องมากกว่า 5 ตัว'),
+  password: z
+    .string()
+    .min(1, "กรุณากรอกรหัสผ่าน")
+    .min(5, "รหัสผ่านต้องมากกว่า 5 ตัว"),
 });
 
 export default function SignIn() {
@@ -49,7 +52,7 @@ export default function SignIn() {
       });
 
       if (result.error) {
-        setError("อีเมลหรือรหัสผ่านผิด กรุณาลองใหม่");
+        setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่");
       } else {
         router.push("/dashboard");
       }
@@ -82,9 +85,7 @@ export default function SignIn() {
           />
           {/* 6. แสดงข้อผิดพลาดจาก Zod/React Hook Form */}
           {errors.email && (
-            <p className="text-red-300 text-sm mt-1">
-              {errors.email.message}
-            </p>
+            <p className="text-red-300 text-sm mt-1">{errors.email.message}</p>
           )}
         </div>
 
