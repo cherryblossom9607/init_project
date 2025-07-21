@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import bcrypt from "bcrypt"; // หรือ library hash password อื่นๆ เช่น argon2, scrypt
+import bcryptjs from "bcryptjs"; // หรือ library hash password อื่นๆ เช่น argon2, scrypt
 import prisma from "@lib/prisma";
 // import { PrismaClient } from "@prisma/client";
 // const prisma = new PrismaClient();
@@ -40,7 +40,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
         }
 
-        const isPasswordValid = await bcrypt.compare(
+        const isPasswordValid = await bcryptjs.compare(
           credentials.password,
           user.password
         );
@@ -59,7 +59,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         // คืนค่า null ถ้า login ไม่สำเร็จ
         throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
-        return null;
       },
     }),
     // ถ้าคุณต้องการใช้ OAuth providers อื่นๆ ก็สามารถเพิ่มได้ที่นี่ เช่น GitHub, Google
@@ -83,6 +82,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.email = token.email;
       }
       return session;
+    },
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isPublicRoute =
+        nextUrl.pathname === "/login" ||
+        nextUrl.pathname === "/register" ||
+        nextUrl.pathname === "/";
+      const isAuthRoute = nextUrl.pathname.startsWith("/auth");
+
+      // ตรรกะการอนุญาต (คล้ายกับใน middleware แต่ควรอยู่ใน auth.ts เพื่อความสอดคล้อง)
+      if (!isLoggedIn && !isPublicRoute && !isAuthRoute) {
+        return Response.redirect(new URL("/login", nextUrl));
+      }
+      // หากเข้าสู่ระบบแล้วและพยายามเข้าถึงหน้าล็อกอิน/ลงทะเบียน ให้เปลี่ยนเส้นทางไปหน้าหลัก
+      if (isLoggedIn && (isPublicRoute || isAuthRoute)) {
+        return Response.redirect(new URL("/", nextUrl));
+      }
+      return true; // อนุญาตให้ดำเนินการต่อ
     },
   },
   pages: {

@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import prisma from "@lib/prisma"; // <--- เปลี่ยนมา import จากไฟล์ที่เราสร้าง!
 
 export async function GET() {
@@ -11,7 +11,7 @@ export async function POST(request) {
   const { name, email, password } = await request.json();
 
   try {
-    const hashPassword = await bcrypt.hashSync(password.toString(), 10); // <--- แนะนำให้ใช้ await bcrypt.hash()
+    const hashPassword = await bcryptjs.hashSync(password.toString(), 10); // <--- แนะนำให้ใช้ await bcryptjs.hash()
 
     const newUser = await prisma.user.create({
       data: {

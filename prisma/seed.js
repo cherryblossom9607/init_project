@@ -6,7 +6,7 @@ async function main() {
     where: { email: "tester@email.com" },
     update: {},
     create: {
-      email: "testing@email.com",
+      email: "tester@email.com",
       name: "tester",
       password: await bcrypt.hashSync("123456", 10),
     },

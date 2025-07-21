@@ -7,12 +7,13 @@ let prisma;
 if (process.env.NODE_ENV === "production") {
   prisma = new PrismaClient();
 } else {
-  // ตรวจสอบว่ามี global.prisma อยู่แล้วหรือไม่ เพื่อป้องกันการสร้างหลาย instances
-  // ในโหมด Development (ที่ Next.js hot-reloads)
-  if (!global.prisma) {
-    global.prisma = new PrismaClient();
+  // ใช้ globalThis แทน global เพื่อความเข้ากันได้ที่กว้างขึ้น (Node.js และบาง Edge environment)
+  // อย่างไรก็ตาม สำหรับ Edge Runtime โดยตรง เช่น Middleware บางครั้งก็ยังไม่ได้
+  if (!globalThis.prisma) {
+    // เปลี่ยนจาก global เป็น globalThis
+    globalThis.prisma = new PrismaClient();
   }
-  prisma = global.prisma;
+  prisma = globalThis.prisma;
 }
 
 export default prisma;
